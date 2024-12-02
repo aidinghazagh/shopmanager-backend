@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'shops'),
     ],
 
     /*
@@ -38,13 +38,13 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'shops',
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | User Providers
+    | Shop Providers
     |--------------------------------------------------------------------------
     |
     | All authentication guards have a user provider, which defines how the
@@ -60,9 +60,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'shops' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', App\Models\Shop::class),
         ],
 
         // 'users' => [
@@ -91,8 +91,8 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'shops' => [
+            'provider' => 'shops',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,
