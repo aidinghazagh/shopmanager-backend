@@ -16,11 +16,9 @@ return new class extends Migration
         Schema::create('product_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete(); // Links to the product
-            $table->enum('action', ['created', 'updated', 'deleted']); // 'created', 'updated', or 'deleted'
             $table->string('changed_field')->nullable(); // Field that was changed
             $table->string('old_value')->nullable(); // Old value of the field
             $table->string('new_value')->nullable(); // New value of the field
-            $table->timestamp('logged_at')->default(DB::raw('CURRENT_TIMESTAMP')); // Log timestamp
             $table->timestamps();
         });
     }

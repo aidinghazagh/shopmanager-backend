@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('order_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Shop::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(\App\Models\Customer::class)->nullable()->constrained()->cascadeOnDelete();
-            $table->unsignedInteger('discount')->nullable();
-            $table->unsignedInteger('price_on_created');
+            $table->foreignIdFor(\App\Models\Order::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Product::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('order_products');
     }
 };

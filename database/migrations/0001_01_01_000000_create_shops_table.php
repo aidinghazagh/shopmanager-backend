@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->string('password');
+            $table->dateTime('valid_until');
             $table->rememberToken();
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

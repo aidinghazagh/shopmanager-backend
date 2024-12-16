@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Shop::class)->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->unsignedInteger('quantity');
             $table->unsignedInteger('price');
             $table->unsignedInteger('purchase_price')->nullable();
             $table->timestamps();

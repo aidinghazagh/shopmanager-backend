@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Shop;
 
 return new class extends Migration
 {
@@ -12,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(Shop::class)->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('phone')->nullable();
-            $table->timestamps();
-
+        Schema::table('shops', function (Blueprint $table) {
+            $table->string('language')->default('en')->after('name');
+        });
+        Schema::table('orders', function (Blueprint $table) {
+            $table->string('purchase_price_on_created');
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        //
     }
 };
