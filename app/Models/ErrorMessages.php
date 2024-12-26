@@ -45,6 +45,7 @@ class ErrorMessages
             'language' => "زبان",
             'price' => "قیمت",
             'purchase_price' => "قیمت خرید",
+            'inventory' => "موجودی",
         ],
     ];
 

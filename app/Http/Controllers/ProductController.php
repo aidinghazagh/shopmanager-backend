@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\ProductInventoryLog;
+use App\Models\ProductLog;
 use App\Models\ResponseResult;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -17,10 +21,10 @@ class ProductController extends Controller
     {
         try{
             $offset = request()->query('offset', 0);
-            $products = Product::select('id', 'name', 'price')->where('shop_id', auth()->id())->orderByDesc('updated_at')
+            $products = Product::where('shop_id', auth()->id())->orderByDesc('updated_at')
                 ->skip($offset)
                 ->take(10)->get();
-            return ResponseResult::success($products);
+            return ResponseResult::success(ProductResource::collection($products));
         }catch (\Exception $e){
             return ResponseResult::Failure([$e->getMessage()]);
         }
@@ -32,12 +36,19 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         try{
+            DB::beginTransaction();
             $product = Product::create(array_merge(
                 $request->validated(),
                 ['shop_id' => auth()->id()]
             ));
-            return ResponseResult::Success($product);
+            ProductInventoryLog::create([
+                'product_id' => $product->id,
+                'quantity_change' => $request->inventory,
+            ]);
+            DB::commit();
+            return ResponseResult::Success(ProductResource::make($product));
         }catch (\Exception $e){
+            DB::rollBack();
             return ResponseResult::Failure([$e->getMessage()]);
         }
     }
@@ -49,7 +60,7 @@ class ProductController extends Controller
     {
         try{
             AuthService::checkUserAccess($product->shop_id);
-            return ResponseResult::Success($product);
+            return ResponseResult::Success(ProductResource::make($product));
         }catch (\Exception $e){
             return ResponseResult::Failure([$e->getMessage()]);
         }
@@ -62,9 +73,40 @@ class ProductController extends Controller
     {
         try {
             AuthService::checkUserAccess($product->shop_id);
-            $product->update($request->validated());
-            return ResponseResult::Success($product);
+            DB::beginTransaction();
+            $originalProduct = $product->getOriginal(); // Fetch the original product data
+            $updatedData = $request->validated(); // Data being updated
+
+            $changedFields = [];
+            foreach ($updatedData as $field => $newValue) {
+                if (array_key_exists($field, $originalProduct) && $originalProduct[$field] != $newValue) {
+                    $changedFields[] = [
+                        'product_id' => $product->id,
+                        'changed_field' => $field,
+                        'old_value' => $originalProduct[$field],
+                        'new_value' => $newValue,
+                    ];
+                }
+            }
+
+            foreach ($changedFields as $changedField) {
+                ProductLog::create($changedField);
+            }
+            $currentInventory = $product->inventory;
+            $newInventory = $request->input('inventory');
+            $inventoryChange = $newInventory - $currentInventory;
+            if ($inventoryChange !== 0) {
+                ProductInventoryLog::create([
+                    'product_id' => $product->id,
+                    'quantity_change' => $inventoryChange,
+                ]);
+            }
+
+            $product->update($updatedData);
+            DB::commit();
+            return ResponseResult::Success(ProductResource::make($product));
         }catch (\Exception $e){
+            DB::rollBack();
             return ResponseResult::Failure([$e->getMessage()]);
         }
     }

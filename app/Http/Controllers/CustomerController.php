@@ -18,7 +18,7 @@ class CustomerController extends Controller
     {
         try{
             $offset = request()->query('offset', 0);
-            $customers = Customer::select('id', 'name', 'phone')->where('shop_id', auth()->id())->orderByDesc('updated_at')
+            $customers = Customer::where('shop_id', auth()->id())->orderByDesc('updated_at')
                 ->skip($offset)
                 ->take(10)->get();
             return ResponseResult::Success($customers);

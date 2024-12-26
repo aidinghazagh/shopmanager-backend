@@ -26,6 +26,7 @@ class StoreProductRequest extends FormRequest
             'name' => 'required|string|max:255',
             'price' => 'required|integer|min:0',
             'purchase_price' => 'nullable|integer|min:0',
+            'inventory' => 'required|integer',
         ];
     }
     public function messages(): array
@@ -42,6 +43,10 @@ class StoreProductRequest extends FormRequest
 
             'purchase_price.integer' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'purchase_price')),
             'purchase_price.min' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'purchase_price'), 0),
+
+            'inventory.required' => ErrorMessages::getMessage($language, 'required', ErrorMessages::getTranslation($language, 'inventory')),
+            'inventory.integer' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'inventory')),
+            'inventory.gt' => ErrorMessages::getMessage($language, 'min', ErrorMessages::getTranslation($language, 'inventory'), 0),
         ];
     }
 }
