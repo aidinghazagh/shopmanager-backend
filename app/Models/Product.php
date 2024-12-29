@@ -21,4 +21,9 @@ class Product extends Model
         return (int) $this->inventoryLogs()->sum('quantity_change');
     }
 
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class)
+            ->using(OrderProduct::class); // Specify the pivot model
+    }
 }

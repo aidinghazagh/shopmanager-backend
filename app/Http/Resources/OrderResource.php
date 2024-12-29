@@ -15,13 +15,14 @@ class OrderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $request->id,
-            'customer' => $request->customer,
-            'discount'=> $request->discount,
-            'price_on_created' => $request->price_on_created,
-            'purchase_price_on_created' => $request->purchase_price_on_created,
-            'created_at' => $request->created_at,
-            'updated_at' => $request->updated_at,
+            'id' => $this->id,
+            'customer' => $this->customer,
+            'discount'=> $this->discount,
+            'price_on_created' => $this->price_on_created,
+            'purchase_price_on_created' => $this->purchase_price_on_created,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'products' => ProductResource::collection($this->products),
         ];
     }
 }

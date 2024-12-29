@@ -19,6 +19,9 @@ class ErrorMessages
             'max' => "Max characters for %s is %s characters",
             'min' => "Min characters for %s is %s characters",
             'invalid_language' => "Invalid language %s",
+            'unauthorized' => "Unauthorized request",
+            'locked_order' => "This order has payments and cannot be edited.",
+            'array' => "%s is not a valid array",
         ],
         'fa' => [
             'shop_phone_not_found' => "فروشگاهی با این شماره تلفن پیدا نشد: %s",
@@ -31,6 +34,9 @@ class ErrorMessages
             'max' => "حداکثر کارکتر برای %s %s است",
             'min' => "حداقل کارکتر برای %s %s است",
             'invalid_language' => "اشتباه است"." %s "."زبان وارد شده",
+            'unauthorized' => "درخواست غیر مجاز",
+            'locked_order' => "این سفارش دارای پرداختی میباشد و قابل ویرایش نیست",
+            'array' => "%s "."باید یک آرایه باشد",
         ],
     ];
     public static function isLanguageValid(string $lang): bool
@@ -46,6 +52,13 @@ class ErrorMessages
             'price' => "قیمت",
             'purchase_price' => "قیمت خرید",
             'inventory' => "موجودی",
+            'customer' => "مشتری",
+            'discount' => "تخفیف",
+            'products' => "محصولات",
+            'paid' => "پرداختی",
+            'products.*' => "محتوای محصولات",
+            'products.*.id' => "آیدی محتوای محصولات",
+            'products.*.quantity' => "تعداد محتوای محصولات",
         ],
     ];
 

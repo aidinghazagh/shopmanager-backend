@@ -25,8 +25,8 @@ class StoreProductRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'price' => 'required|integer|min:0',
-            'purchase_price' => 'nullable|integer|min:0',
-            'inventory' => 'required|integer',
+            'purchase_price' => 'required|integer|min:0',
+            'inventory' => 'required|integer|min:1',
         ];
     }
     public function messages(): array
@@ -46,7 +46,7 @@ class StoreProductRequest extends FormRequest
 
             'inventory.required' => ErrorMessages::getMessage($language, 'required', ErrorMessages::getTranslation($language, 'inventory')),
             'inventory.integer' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'inventory')),
-            'inventory.gt' => ErrorMessages::getMessage($language, 'min', ErrorMessages::getTranslation($language, 'inventory'), 0),
+            'inventory.min' => ErrorMessages::getMessage($language, 'min', ErrorMessages::getTranslation($language, 'inventory'), 1),
         ];
     }
 }

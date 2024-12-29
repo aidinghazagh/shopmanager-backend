@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ProductLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,8 +16,8 @@ class ProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         return array_merge(parent::toArray($request), [
-            'logs' => $this->logs,
-            'inventoryLogs' => $this->inventoryLogs
+            'logs' => ProductLogResource::collection($this->logs->sortByDesc('created_at')),
+            'inventoryLogs' => ProductInventoryLogResource::collection($this->inventoryLogs->sortByDesc('created_at')),
         ]);
     }
 }
