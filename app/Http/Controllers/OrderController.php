@@ -43,27 +43,26 @@ class OrderController extends Controller
 
             DB::beginTransaction();
             $order = Order::create(array_merge($request->validated(), [
-                'shop_id' => auth()->id(),
+                'shop_id' => $user->id,
             ]));
+            $productIds = array_keys($productDetails);
+            $products = Product::where('shop_id', $user->id)->whereIn('id', $productIds)->get()->keyBy('id');
 
             // Prepare pivot table data with prices and quantities
             $syncData = [];
             foreach ($productDetails as $productId => $quantity) {
-                $product = Product::find($productId);
-
-                // Validate
-                if ($product->shop_id != $order->shop_id) {
-                    throw new \Exception(ErrorMessages::getMessage($user->language, 'unauthorized'));
-                }
+                $product = $products[$productId] ?? throw new \Exception(ErrorMessages::getMessage($user->language, 'product_not_found'));
 
                 $syncData[$productId] = [
+                    'name_on_created' => $product->name,
                     'price_on_created' => $product->price,
                     'purchase_price_on_created' => $product->purchase_price,
                     'quantity' => $quantity,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
             }
-            // Attach products to the order with additional pivot fields
-            $order->products()->attach($syncData);
+            $order->products()->syncWithoutDetaching($syncData);
             $paidAmount = $request->get('paid');
             if ($paidAmount) {
                 Payment::create([
@@ -72,7 +71,7 @@ class OrderController extends Controller
                 ]);
             }
             DB::commit();
-            return ResponseResult::Success(OrderResource::collection($order));
+            return ResponseResult::Success(new OrderResource($order));
         }catch (\Exception $e){
             DB::rollBack();
             return ResponseResult::Failure([$e->getMessage()]);
@@ -95,52 +94,53 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreOrderRequest $request, Order $order)
-    {
-        try{
-            DB::beginTransaction();
-            AuthService::checkUserAccess($order->shop_id);
-            $language = auth()->user()->language;
-
-            if ($order->isLocked) {
-                throw new \Exception(ErrorMessages::getMessage($language, 'locked_order'));
-            }
-            $order->update($request->validated());
-
-            // Get product details from the request
-            $productDetails = $request->get('products', []); // Array of product IDs with quantities, e.g., [1 => 2, 2 => 3]
-
-            $syncData = [];
-            foreach ($productDetails as $productId => $quantity) {
-                $product = Product::find($productId);
-
-                // Validate
-                if ($product->shop_id != $order->shop_id) {
-                    throw new \Exception(ErrorMessages::getMessage($language, 'unauthorized'));
-                }
-
-                // Prepare sync data with additional pivot fields
-                $syncData[$productId] = [
-                    'price_on_created' => $product->price,
-                    'purchase_price_on_created' => $product->purchase_price,
-                    'quantity' => $quantity,
-                ];
-            }
-            $order->products()->sync($syncData);
-            $paidAmount = $request->get('paid');
-            if ($paidAmount) {
-                Payment::create([
-                    'order_id' => $order->id,
-                    'amount' => $paidAmount,
-                ]);
-            }
-            DB::commit();
-            return ResponseResult::Success(new OrderResource($order));
-        }catch (\Exception $e){
-            DB::rollBack();
-            return ResponseResult::Failure([$e->getMessage()]);
-        }
-    }
+//    public function update(StoreOrderRequest $request, Order $order)
+//    {
+//        try{
+//            DB::beginTransaction();
+//            AuthService::checkUserAccess($order->shop_id);
+//            $language = auth()->user()->language;
+//
+//            if ($order->isLocked) {
+//                throw new \Exception(ErrorMessages::getMessage($language, 'locked_order'));
+//            }
+//            $order->update($request->validated());
+//
+//            // Get product details from the request
+//            $productDetails = $request->get('products', []); // Array of product IDs with quantities, e.g., [1 => 2, 2 => 3]
+//
+//            $syncData = [];
+//            foreach ($productDetails as $productId => $quantity) {
+//                $product = Product::find($productId);
+//
+//                // Validate
+//                if ($product->shop_id != $order->shop_id) {
+//                    throw new \Exception(ErrorMessages::getMessage($language, 'unauthorized'));
+//                }
+//
+//                // Prepare sync data with additional pivot fields
+//                $syncData[$productId] = [
+//                    'price_on_created' => $product->price,
+//                    'purchase_price_on_created' => $product->purchase_price,
+//                    'quantity' => $quantity,
+//                    'updated_at' => now(),
+//                ];
+//            }
+//            $order->products()->syncWithoutDetaching($syncData);
+//            $paidAmount = $request->get('paid');
+//            if ($paidAmount) {
+//                Payment::create([
+//                    'order_id' => $order->id,
+//                    'amount' => $paidAmount,
+//                ]);
+//            }
+//            DB::commit();
+//            return ResponseResult::Success(new OrderResource($order));
+//        }catch (\Exception $e){
+//            DB::rollBack();
+//            return ResponseResult::Failure([$e->getMessage()]);
+//        }
+//    }
 
     /**
      * Remove the specified resource from storage.

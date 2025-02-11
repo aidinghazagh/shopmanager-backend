@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Resources\OrderResource;
 use App\Models\Customer;
+use App\Models\Order;
 use App\Models\ResponseResult;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
@@ -24,6 +26,24 @@ class CustomerController extends Controller
             return ResponseResult::Success($customers);
         } catch (Throwable $throwable){
             return ResponseResult::Failure([$throwable->getMessage()]);
+        }
+    }
+    public function orders(Request $request, Customer $customer)
+    {
+        try{
+            $orders = Order::where('customer_id', $customer->id)->orderByDesc('created_at')->get();
+            return ResponseResult::Success(OrderResource::collection($orders));
+        }catch (Throwable $throwable){
+            return ResponseResult::Failure([$throwable->getMessage()]);
+        }
+    }
+    public function dropdown()
+    {
+        try{
+            $customers = Customer::select('name', 'id')->where('shop_id', auth()->id())->orderByDesc('updated_at')->get();
+            return ResponseResult::success($customers);
+        }catch (\Exception $e){
+            return ResponseResult::Failure([$e->getMessage()]);
         }
     }
 

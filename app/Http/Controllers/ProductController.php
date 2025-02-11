@@ -29,7 +29,15 @@ class ProductController extends Controller
             return ResponseResult::Failure([$e->getMessage()]);
         }
     }
-
+    public function dropdown()
+    {
+        try{
+            $products = Product::select('name', 'id', 'price')->where('shop_id', auth()->id())->orderByDesc('updated_at')->get();
+            return ResponseResult::success($products);
+        }catch (\Exception $e){
+            return ResponseResult::Failure([$e->getMessage()]);
+        }
+    }
     /**
      * Store a newly created resource in storage.
      */

@@ -22,6 +22,9 @@ class ErrorMessages
             'unauthorized' => "Unauthorized request",
             'locked_order' => "This order has payments and cannot be edited.",
             'array' => "%s is not a valid array",
+            'order_for_shop_not_found' => "Order for this shop not found",
+            'order_id_not_changeable' => "Cannot change dedicated order",
+            'product_not_found' => "Product: %s not found",
         ],
         'fa' => [
             'shop_phone_not_found' => "فروشگاهی با این شماره تلفن پیدا نشد: %s",
@@ -37,6 +40,9 @@ class ErrorMessages
             'unauthorized' => "درخواست غیر مجاز",
             'locked_order' => "این سفارش دارای پرداختی میباشد و قابل ویرایش نیست",
             'array' => "%s "."باید یک آرایه باشد",
+            'order_for_shop_not_found' => "این سفارش برای فروشگاه پیدا نشد",
+            'order_id_not_changeable' => "نمی توان سفارش انتخاب شده را تغییر داد",
+            'product_not_found' => "پیدا نشد"." %s "."محصول ",
         ],
     ];
     public static function isLanguageValid(string $lang): bool
@@ -57,8 +63,8 @@ class ErrorMessages
             'products' => "محصولات",
             'paid' => "پرداختی",
             'products.*' => "محتوای محصولات",
-            'products.*.id' => "آیدی محتوای محصولات",
-            'products.*.quantity' => "تعداد محتوای محصولات",
+            'order_id' => "آیدی سفارش",
+            'amount' => "مقدار",
         ],
     ];
 

@@ -41,6 +41,7 @@ class StoreProductRequest extends FormRequest
             'price.integer' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'price')),
             'price.min' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'price'), 0),
 
+            'purchase_price.required' => ErrorMessages::getMessage($language, 'required', ErrorMessages::getTranslation($language, 'purchase_price')),
             'purchase_price.integer' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'purchase_price')),
             'purchase_price.min' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'purchase_price'), 0),
 

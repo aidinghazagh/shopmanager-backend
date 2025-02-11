@@ -17,7 +17,7 @@ class ProductResource extends JsonResource
     {
         return array_merge(parent::toArray($request), [
             'logs' => ProductLogResource::collection($this->logs->sortByDesc('created_at')),
-            'inventoryLogs' => ProductInventoryLogResource::collection($this->inventoryLogs->sortByDesc('created_at')),
+            'inventory_logs' => ProductInventoryLogResource::collection($this->inventoryLogs->sortByDesc('created_at')),
         ]);
     }
 }
