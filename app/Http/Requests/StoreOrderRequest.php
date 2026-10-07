@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\ErrorMessages;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -23,7 +24,11 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'nullable|integer',
+            'customer_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('customers', 'id')->where('shop_id', auth()->id()),
+            ],
             'discount' => 'nullable|integer',
             'products' => 'required|array',
             'products.*' => 'required|int|min:1',
@@ -35,6 +40,7 @@ class StoreOrderRequest extends FormRequest
         $language = auth()->user()->language;
         return [
             'customer_id.integer' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'customer')),
+            'customer_id.exists' => ErrorMessages::getMessage($language, 'customer_not_found'),
             'discount.integer' => ErrorMessages::getMessage($language, 'integer', ErrorMessages::getTranslation($language, 'discount')),
 
             'products.required' => ErrorMessages::getMessage($language, 'required', ErrorMessages::getTranslation($language, 'products')),

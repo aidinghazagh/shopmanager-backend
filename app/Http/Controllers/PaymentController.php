@@ -33,6 +33,9 @@ class PaymentController extends Controller
     public function store(Order $order, StorePaymentRequest $request)
     {
         try {
+            if($order->shop_id != auth()->id()){
+                throw new Exception(ErrorMessages::getMessage(auth()->user()->language, 'unauthorized'));
+            }
             $payment = Payment::create(array_merge($request->validated(), ['order_id' => $order->id]));
             return ResponseResult::Success($payment);
         }catch (\Exception $e){

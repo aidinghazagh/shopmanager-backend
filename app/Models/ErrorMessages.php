@@ -25,6 +25,7 @@ class ErrorMessages
             'order_for_shop_not_found' => "Order for this shop not found",
             'order_id_not_changeable' => "Cannot change dedicated order",
             'product_not_found' => "Product: %s not found",
+            'customer_not_found' => "Customer not found",
         ],
         'fa' => [
             'shop_phone_not_found' => "فروشگاهی با این شماره تلفن پیدا نشد: %s",
@@ -43,6 +44,7 @@ class ErrorMessages
             'order_for_shop_not_found' => "این سفارش برای فروشگاه پیدا نشد",
             'order_id_not_changeable' => "نمی توان سفارش انتخاب شده را تغییر داد",
             'product_not_found' => "پیدا نشد"." %s "."محصول ",
+            'customer_not_found' => "مشتری پیدا نشد",
         ],
     ];
     public static function isLanguageValid(string $lang): bool

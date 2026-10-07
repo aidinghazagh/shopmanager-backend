@@ -20,6 +20,7 @@ class Shop extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'language',
         'phone',
         'password',
     ];

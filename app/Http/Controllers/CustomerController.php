@@ -31,6 +31,7 @@ class CustomerController extends Controller
     public function orders(Request $request, Customer $customer)
     {
         try{
+            AuthService::checkUserAccess($customer->shop_id);
             $orders = Order::where('customer_id', $customer->id)->orderByDesc('created_at')->get();
             return ResponseResult::Success(OrderResource::collection($orders));
         }catch (Throwable $throwable){
